@@ -638,7 +638,7 @@ def clear_selected_nodes(node_editor : Union[int, str]) -> None:
 	"""Clears a node editor's selected nodes."""
 	...
 
-def configure_app(*, docking: bool ='', docking_space: bool ='', load_init_file: str ='', init_file: str ='', auto_save_init_file: bool ='', device: int ='', auto_device: bool ='', allow_alias_overwrites: bool ='', manual_alias_management: bool ='', skip_required_args: bool ='', skip_positional_args: bool ='', skip_keyword_args: bool ='', **kwargs) -> None:
+def configure_app(*, docking: bool ='', docking_space: bool ='', load_init_file: str ='', init_file: str ='', auto_save_init_file: bool ='', device: int ='', auto_device: bool ='', allow_alias_overwrites: bool ='', manual_alias_management: bool ='', skip_required_args: bool ='', skip_positional_args: bool ='', skip_keyword_args: bool ='', manual_callback_management: bool ='', **kwargs) -> None:
 	"""Configures app."""
 	...
 
@@ -796,6 +796,10 @@ def get_app_configuration() -> dict:
 
 def get_axis_limits(axis : Union[int, str]) -> Union[List[float], Tuple[float, ...]]:
 	"""Get the specified axis limits."""
+	...
+
+def get_callback_queue() -> Any:
+	"""Sets a callback to run on viewport resize."""
 	...
 
 def get_colormap_color(colormap : Union[int, str], index : int) -> Union[List[int], Tuple[int, ...]]:
@@ -1096,10 +1100,6 @@ def set_table_row_color(table : Union[int, str], row : int, color : Union[List[i
 
 def set_value(item : Union[int, str], value : Any) -> None:
 	"""Set's an item's value."""
-	...
-
-def set_viewport_resize_callback(callback : Callable) -> str:
-	"""Sets a callback to run on viewport resize."""
 	...
 
 def set_x_scroll(item : Union[int, str], value : float) -> None:

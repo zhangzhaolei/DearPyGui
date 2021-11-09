@@ -43,15 +43,14 @@ namespace Marvel {
 
 		{
 			std::vector<mvPythonDataElement> args;
-			args.push_back({ mvPyDataType::Callable, "callback" });
 
 			mvPythonParserSetup setup;
 			setup.about = "Sets a callback to run on viewport resize.";
 			setup.category = { "General" };
-			setup.returnType = mvPyDataType::String;
+			setup.returnType = mvPyDataType::Object;
 
 			mvPythonParser parser = FinalizeParser(setup, args);
-			parsers->insert({ "set_viewport_resize_callback", parser });
+			parsers->insert({ "get_callback_queue", parser });
 		}
 
 	}
@@ -109,6 +108,12 @@ namespace Marvel {
 			if (user_data != nullptr)
 				Py_XDECREF(user_data);
 			assert(false);
+			return;
+		}
+
+		if (GContext->IO.manualCallbacks)
+		{
+			GContext->callbackRegistry->jobs.push_back({ callable, sender, app_data, user_data });
 			return;
 		}
 
@@ -420,6 +425,39 @@ namespace Marvel {
 				GContext->callbackRegistry->onCloseCallback = SanitizeCallback(callback);
 			});
 		return GetPyNone();
+	}
+
+	PyObject* get_callback_queue(PyObject* self, PyObject* args, PyObject* kwargs)
+	{
+		if(GContext->callbackRegistry->jobs.empty())
+			return GetPyNone();
+
+		PyObject* pArgs = PyTuple_New(GContext->callbackRegistry->jobs.size());
+		for (int i = 0; i < GContext->callbackRegistry->jobs.size(); i++)
+		{
+			PyObject* job = PyTuple_New(4);
+			if(GContext->callbackRegistry->jobs[i].callback)
+				PyTuple_SetItem(job, 0, GContext->callbackRegistry->jobs[i].callback);
+			else
+				PyTuple_SetItem(job, 0, GetPyNone());
+
+			PyTuple_SetItem(job, 1, ToPyUUID(GContext->callbackRegistry->jobs[i].sender));
+
+			if(GContext->callbackRegistry->jobs[i].app_data)
+				PyTuple_SetItem(job, 2, GContext->callbackRegistry->jobs[i].app_data); // steals data, so don't deref
+			else
+				PyTuple_SetItem(job, 2, GetPyNone());
+
+			if (GContext->callbackRegistry->jobs[i].user_data)
+				PyTuple_SetItem(job, 3, GContext->callbackRegistry->jobs[i].user_data); // steals data, so don't deref
+			else
+				PyTuple_SetItem(job, 3, GetPyNone());
+
+			PyTuple_SetItem(pArgs, i, job);
+		}
+
+		GContext->callbackRegistry->jobs.clear();
+		return pArgs;
 	}
 
 	PyObject* set_viewport_resize_callback(PyObject* self, PyObject* args, PyObject* kwargs)

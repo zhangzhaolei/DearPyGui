@@ -14,10 +14,19 @@ namespace Marvel {
 		return callback;
 	}
 
+	struct mvCallbackJob
+	{
+		PyObject* callback;
+		mvUUID sender;
+		PyObject* app_data;
+		PyObject* user_data;
+	};
+
 	struct mvCallbackRegistry
 	{
 		const i32 maxNumberOfCalls = 50;
 
+		std::vector<mvCallbackJob> jobs;
 		mvQueue<mvFunctionWrapper> tasks;
 		mvQueue<mvFunctionWrapper> calls;
 		std::atomic<b8>            running = false;
@@ -81,11 +90,13 @@ namespace Marvel {
 	MV_CREATE_FREE_COMMAND(set_frame_callback);
 	MV_CREATE_FREE_COMMAND(set_exit_callback);
 	MV_CREATE_FREE_COMMAND(set_viewport_resize_callback);
+	MV_CREATE_FREE_COMMAND(get_callback_queue);
 
 	MV_START_FREE_COMMANDS(mvCallbackRegCommands)
 		MV_ADD_COMMAND(set_frame_callback);
 		MV_ADD_COMMAND(set_exit_callback);
 		MV_ADD_COMMAND(set_viewport_resize_callback);
+		MV_ADD_COMMAND(get_callback_queue);
 	MV_END_COMMANDS
 
 }

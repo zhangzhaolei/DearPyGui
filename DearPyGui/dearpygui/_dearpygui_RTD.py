@@ -7065,6 +7065,16 @@ def get_axis_limits(axis):
 
 	return internal_dpg.get_axis_limits(axis)
 
+def get_callback_queue():
+	"""	 Sets a callback to run on viewport resize.
+
+	Args:
+	Returns:
+		Any
+	"""
+
+	return internal_dpg.get_callback_queue()
+
 def get_colormap_color(colormap, index):
 	"""	 Returns a color from a colormap given an index >= 0. (ex. 0 will be the first color in the color list of the color map) Modulo will be performed against the number of items in the color list.
 
@@ -7906,17 +7916,6 @@ def set_value(item, value):
 	"""
 
 	return internal_dpg.set_value(item, value)
-
-def set_viewport_resize_callback(callback):
-	"""	 Sets a callback to run on viewport resize.
-
-	Args:
-		callback (Callable): 
-	Returns:
-		str
-	"""
-
-	return internal_dpg.set_viewport_resize_callback(callback)
 
 def set_x_scroll(item, value):
 	"""	 Undocumented
